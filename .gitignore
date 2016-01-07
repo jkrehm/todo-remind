@@ -1,0 +1,7 @@
+*.sublime-project
+*.sublime-workspace
+composer.phar
+sftp-config.json
+
+logs
+vendor
