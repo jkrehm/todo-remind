@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require realpath(__DIR__ . '/../vendor/autoload.php');
 
@@ -18,9 +18,9 @@ function updateTodos($app, $dbxClient) {
 
     $todos = [];
     foreach ($lines as $todo) {
-        if (preg_match('/(.+) \[(.+)\]/', $todo, $matches)) {
+        if (preg_match('/(.+) due:(.+)\b/', $todo, $matches)) {
             $text = $matches[1];
-            $datetime = DateTime::createFromFormat('Y-m-d H:i', $matches[2]);
+            $datetime = DateTime::createFromFormat('Y-m-d-H:i', $matches[2]);
 
             // Default un-timed items to 8am
             if (!$datetime) {
