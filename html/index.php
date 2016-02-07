@@ -20,7 +20,7 @@ function updateTodos($app, $dbxClient) {
     foreach ($lines as $todo) {
         if (preg_match('/(.+) due:(.+)\b/', $todo, $matches)) {
             $text = $matches[1];
-            $datetime = DateTime::createFromFormat('Y-m-d-H:i', $matches[2]);
+            $datetime = DateTime::createFromFormat('Y-m-d-Hi', $matches[2]);
 
             // Default un-timed items to 8am
             if (!$datetime) {
