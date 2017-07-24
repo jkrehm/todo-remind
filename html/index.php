@@ -18,7 +18,7 @@ function updateTodos($app, $dbxClient) {
 
     $todos = [];
     foreach ($lines as $todo) {
-        if (preg_match('/(.+) due:(.+)\b/', $todo, $matches)) {
+        if (preg_match('/(.+) notify:(\S+)/', $todo, $matches)) {
             $text = $matches[1];
             $datetime = DateTime::createFromFormat('Y-m-d-Hi', $matches[2]);
 
