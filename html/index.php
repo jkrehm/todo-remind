@@ -2,7 +2,11 @@
 
 require realpath(__DIR__ . '/../vendor/autoload.php');
 
-$app = new \Slim\App;
+$app = new \Slim\App(new \Slim\Container([
+    'settings' => [
+        'displayErrorDetails' => true,
+    ],
+]));
 $app->config = new \TodoRemind\Config(realpath(__DIR__ . '/../config'));
 $app->db = new \TodoRemind\Db(realpath(__DIR__ . '/../db.json'));
 
