@@ -16,34 +16,37 @@ function updateTodos($app, $dbxClient) {
 
     $now = new DateTime();
 
-    $todos = [];
-    foreach ($lines as $todo) {
-        if (preg_match('/(.+) notify:(\S+)/', $todo, $matches)) {
-            $text = $matches[1];
-            $datetime = DateTime::createFromFormat('Y-m-d-Hi', $matches[2]);
-
-            // Default un-timed items to 8am
-            if (!$datetime) {
-                $datetime = DateTime::createFromFormat('Y-m-d', $matches[2]);
-
-                if (!$datetime) {
-                    continue;
-                }
-
-                $datetime->setTime(8, 0);
-            }
-
-            // Do not stage past items
-            if ($datetime < $now) {
-                continue;
-            }
-
-            $todos[] = [
-                'text'     => $matches[1],
-                'datetime' => $datetime->format('Y-m-d H:i'),
-            ];
+    $todos = array_reduce($lines, function ($acc, $todo) use ($now) {
+        if (!preg_match('/(.+) notify:(\S+)/', $todo, $matches)) {
+            return $acc;
         }
-    }
+
+        $text = $matches[1];
+        $datetime = DateTime::createFromFormat('Y-m-d-Hi', $matches[2]);
+
+        // Default un-timed items to 8am
+        if (!$datetime) {
+            $datetime = DateTime::createFromFormat('Y-m-d', $matches[2]);
+
+            if (!$datetime) {
+                return $acc;
+            }
+
+            $datetime->setTime(8, 0);
+        }
+
+        // Do not stage past items
+        if ($datetime < $now) {
+            return $acc;
+        }
+
+        $acc[] = [
+            'text'     => $todo,
+            'datetime' => $datetime->format('Y-m-d H:i'),
+        ];
+
+        return $acc;
+    }, []);
 
     $app->db->update('todos', $todos);
 
