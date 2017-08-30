@@ -9,6 +9,7 @@ $app = new \Slim\App(new \Slim\Container([
 ]));
 $app->config = new \TodoRemind\Config(realpath(__DIR__ . '/../config'));
 $app->db = new \TodoRemind\Db(realpath(__DIR__ . '/../db.json'));
+$app->pb = new \Pushbullet\Pushbullet($app->config->item('pushbullet')['access_token']);
 
 function updateTodos($app, $dbxClient) {
 
@@ -51,6 +52,15 @@ function updateTodos($app, $dbxClient) {
 
         return $acc;
     }, []);
+
+    $todosText = array_column($app->db->query('todos') ?: [], 'text');
+
+    // Alert about new todo notifications
+    foreach($todos as $todo) {
+        if (!in_array($todo['text'], $todosText)) {
+            $app->pb->allDevices()->pushNote('Todo Reminder Added', $todo['text']);
+        }
+    }
 
     $app->db->update('todos', $todos);
 
