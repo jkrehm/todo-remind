@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <form action="{{ url_for('config_update') }}" method="post" class="container">
+    <h1 class="title">Configuration</h1>
+
+    <div class="columns">
+      <div class="column is-half">
+        <h2 class="title">Dropbox</h2>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label for="dropbox[key]" class="label">Key</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="text" id="dropbox[key]" name="dropbox[key]" class="input" placeholder="Application Key"
+                       value="{{ dropbox.key }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label for="dropbox[secret]" class="label">Secret</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="password" id="dropbox[secret]" name="dropbox[secret]" class="input" placeholder="Application Secret"
+                       value="{{ dropbox.secret }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label for="dropbox[access_token]" class="label">Token</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="text" id="dropbox[access_token]" name="dropbox[access_token]" class="input" placeholder="Access Token"
+                       value="{{ dropbox.access_token }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label for="dropbox[file_location]" class="label">File</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="text" id="dropbox[file_location]" name="dropbox[file_location]" class="input" placeholder="File Location"
+                       value="{{ dropbox.file_location }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="column is-half">
+        <h2 class="title">Pushbullet</h2>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label for="pushbullet[access_token]" class="label">Token</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input type="text" id="pushbullet[access_token]" name="pushbullet[access_token]" class="input" placeholder="Access Token"
+                       value="{{ pushbullet.access_token }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <button class="button is-primary">Update</button>
+  </form>
+{% endblock %}

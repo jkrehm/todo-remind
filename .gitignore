@@ -1,7 +1,13 @@
+*.iml
+*.log
 *.sublime-project
 *.sublime-workspace
+app.db
 composer.phar
 sftp-config.json
 
+.idea
+__pycache__
+env
 logs
 vendor
