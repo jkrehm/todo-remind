@@ -43,7 +43,7 @@ app.logger.info('Starting ToDo Remind...')
 @app.route('/')
 def main():
     """Show main page"""
-    return ''
+    return render_template('main.html')
 
 
 @app.route('/config')
@@ -86,6 +86,12 @@ def config_update():
     return redirect(url_for('config'))
 
 
+@app.route('/todos')
+def todos():
+    todos = db.session.query(models.ToDo)  # type: List[models.ToDo]
+    return render_template('todos.html', todos=todos)
+
+
 def get_datetime(value):
     """Convert string to datetime, defaulting to 8:00am if no time is specified"""
     try:
@@ -97,6 +103,7 @@ def get_datetime(value):
 
 def update_todos(content):
     """Update todos from content"""
+    now = datetime.now()
     search = re.compile('^(?!x )(.+) notify:(\S+)', re.IGNORECASE)
     lines = [s.strip() for s in content.splitlines()]
     todos = []
@@ -108,8 +115,8 @@ def update_todos(content):
             todo = models.ToDo()
             todo.text = match.group(1)
             todo.date_time = get_datetime(match.group(2))
-            todos.append(todo)
-
+            if todo.date_time > now:
+                todos.append(todo)
             if db.session.query(models.ToDo).filter(models.ToDo.text == todo.text) is None:
                 send_notification('Todo Reminder Added', body=todo.text)
         except ValueError:
@@ -182,7 +189,7 @@ def debug():
             return 'File not found: ' + dropbox.file_location
         return 'Other error occurred'
     update_todos(content=res.content)
-    return 'ToDos updated'
+    return redirect(url_for('todos'))
 
 
 def send_notification(title, body, pb=None):
@@ -206,6 +213,8 @@ def notify():
     pb = Pushbullet(pushbullet.access_token)
     for notification in notifications:
         send_notification(title='Todo Reminder', body=notification.text, pb=pb)
+        db.session.delete(notification)
+    db.session.commit()
 
 
 if __name__ == '__main__':

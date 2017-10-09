@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <section class="container">
+    <h1 class="title">ToDos</h1>
+
+    <table class="table is-bordered is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>ToDo</th>
+          <th>Notifcation Date/Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for todo in todos %}
+          <tr>
+            <td>
+              {{ todo.text }}
+            </td>
+            <td>
+              {{ todo.date_time }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <a href="{{ url_for('main') }}" class="button">Back</a>
+  </section>
+{% endblock %}

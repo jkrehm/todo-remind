@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <section class="container">
+    <h1 class="title">ToDo Reminder</h1>
+
+    <ul>
+      <li>
+        <a href="{{ url_for('config') }}">Configuration</a>
+      </li>
+      <li>
+        <a href="{{ url_for('todos') }}">ToDos</a>
+      </li>
+      <li>
+        <a href="{{ url_for('debug') }}">Debug</a>
+      </li>
+    </ul>
+  </section>
+{% endblock %}
