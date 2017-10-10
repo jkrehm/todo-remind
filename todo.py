@@ -117,7 +117,10 @@ def update_todos(content):
             todo.date_time = get_datetime(match.group(2))
             if todo.date_time > now:
                 todos.append(todo)
-            if db.session.query(models.ToDo).filter(models.ToDo.text == todo.text) is None:
+            found_todo = db.session.query(models.ToDo).filter(
+                models.ToDo.text == todo.text
+            ).first()  # type: models.ToDo
+            if found_todo is None or found_todo.date_time != todo.date_time:
                 send_notification('Todo Reminder Added', body=todo.text)
         except ValueError:
             pass
