@@ -115,8 +115,9 @@ def update_todos(content):
             todo = models.ToDo()
             todo.text = match.group(1)
             todo.date_time = get_datetime(match.group(2))
-            if todo.date_time > now:
-                todos.append(todo)
+            if todo.date_time < now:
+                continue
+            todos.append(todo)
             found_todo = db.session.query(models.ToDo).filter(
                 models.ToDo.text == todo.text
             ).first()  # type: models.ToDo
