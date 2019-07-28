@@ -11,7 +11,8 @@ require notifications.
 # Setup
 
 * Create a virtual environment, e.g. `virtualenv env`.
-* Run `source env/bin/activate`.
+* Run `env\Scripts\activate` (Windows) or `source env/bin/activate`
+  (Linux/macOS).
 * Run `pip install -r requirements.txt`.
 * Run `flask run` to start the application.
 * Navigate to [http://127.0.0.1:5000/config](http://127.0.0.1:5000/config) 

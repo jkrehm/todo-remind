@@ -14,6 +14,7 @@ from logging.handlers import RotatingFileHandler
 from pushbullet import Pushbullet
 from reverse_proxy import ReverseProxied
 from typing import List
+from waitress import serve
 
 
 app = Flask(__name__)
@@ -222,4 +223,4 @@ def notify():
 
 
 if __name__ == '__main__':
-    app.run()
+    serve(app, host='0.0.0.0', port=5000)
