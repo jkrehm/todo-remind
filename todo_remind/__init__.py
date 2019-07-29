@@ -1,3 +1,4 @@
+import click
 import hmac
 import logging
 import os
@@ -7,6 +8,7 @@ from dropbox import Dropbox
 from dropbox.files import Metadata
 from dropbox.exceptions import ApiError
 from flask import abort, Flask, redirect, render_template, request, url_for
+from flask.cli import with_appcontext
 from hashlib import sha256
 from logging.handlers import RotatingFileHandler
 from pushbullet import Pushbullet
@@ -14,6 +16,32 @@ from todo_remind import db as models
 from todo_remind.db import db
 from todo_remind.reverse_proxy import ReverseProxied
 from typing import List
+
+
+def send_notification(title, body, pb=None):
+    """Send notification via Pushbullet"""
+    if pb is None:
+        pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
+        pb = Pushbullet(pushbullet.access_token)
+    return pb.push_note(title=title, body=body)
+
+
+@click.command()
+@with_appcontext
+def notify():
+    """Find and send notifications"""
+    now = datetime.now().replace(second=0, microsecond=0)
+    notifications = db.session.query(models.ToDo).filter(
+        models.ToDo.date_time == now
+    )  # type: List[models.ToDo]
+    if notifications is None:
+        return
+    pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
+    pb = Pushbullet(pushbullet.access_token)
+    for notification in notifications:
+        send_notification(title='Todo Reminder', body=notification.text, pb=pb)
+        db.session.delete(notification)
+    db.session.commit()
 
 
 def create_app():
@@ -27,6 +55,7 @@ def create_app():
         ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False
     )
+    app.cli.add_command(notify)
     with app.app_context():
         db.init_app(app)
         db.create_all()
@@ -187,28 +216,5 @@ def create_app():
             return 'Other error occurred'
         update_todos(content=res.content)
         return redirect(url_for('show_todos'))
-
-    def send_notification(title, body, pb=None):
-        """Send notification via Pushbullet"""
-        if pb is None:
-            pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
-            pb = Pushbullet(pushbullet.access_token)
-        return pb.push_note(title=title, body=body)
-
-    @app.cli.command()
-    def notify():
-        """Find and send notifications"""
-        now = datetime.now().replace(second=0, microsecond=0)
-        notifications = db.session.query(models.ToDo).filter(
-            models.ToDo.date_time == now
-        )  # type: List[models.ToDo]
-        if notifications is None:
-            return
-        pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
-        pb = Pushbullet(pushbullet.access_token)
-        for notification in notifications:
-            send_notification(title='Todo Reminder', body=notification.text, pb=pb)
-            db.session.delete(notification)
-        db.session.commit()
 
     return app

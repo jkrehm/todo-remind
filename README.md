@@ -1,7 +1,7 @@
 # Overview
 
 Accepts webhook requests from Dropbox to update the list of ToDo items that
-require notifications.
+require notifications. Then send notifications via Pushbullet.
 
 # Requirements
 
@@ -20,7 +20,7 @@ require notifications.
 * Navigate to [http://127.0.0.1:5000/debug](http://127.0.0.1:5000/debug) 
   to verify todo items are getting populated.
 * Configure Dropbox to send webhook requests to the `/sync` route.
-* Run `FLASK_APP=/path/to/todo.py flask notify` to run the notifier.
+* Run `FLASK_APP=/path/to/todo_remind flask notify` to run the notifier.
 
 # Reverse Proxy
 
