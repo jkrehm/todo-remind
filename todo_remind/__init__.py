@@ -1,10 +1,8 @@
-import db as models
 import hmac
 import logging
 import os
 import re
 from datetime import datetime
-from db import db
 from dropbox import Dropbox
 from dropbox.files import Metadata
 from dropbox.exceptions import ApiError
@@ -12,7 +10,9 @@ from flask import abort, Flask, redirect, render_template, request, url_for
 from hashlib import sha256
 from logging.handlers import RotatingFileHandler
 from pushbullet import Pushbullet
-from reverse_proxy import ReverseProxied
+from todo_remind import db as models
+from todo_remind.db import db
+from todo_remind.reverse_proxy import ReverseProxied
 from typing import List
 
 
@@ -186,7 +186,7 @@ def create_app():
                 return 'File not found: ' + dropbox.file_location
             return 'Other error occurred'
         update_todos(content=res.content)
-        return redirect(url_for('todos'))
+        return redirect(url_for('show_todos'))
 
     def send_notification(title, body, pb=None):
         """Send notification via Pushbullet"""
