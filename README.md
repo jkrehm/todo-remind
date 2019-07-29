@@ -10,8 +10,8 @@ require notifications.
 
 # Setup
 
-* Create a virtual environment, e.g. `virtualenv env`.
-* Run `env\Scripts\activate` (Windows) or `source env/bin/activate`
+* Create a virtual environment, e.g. `virtualenv venv`.
+* Run `venv\Scripts\activate` (Windows) or `source venv/bin/activate`
   (Linux/macOS).
 * Run `pip install -r requirements.txt`.
 * Run `flask run` to start the application.
@@ -51,9 +51,9 @@ Description=todo-remind
 [Service]
 Type=simple
 User=jonathan
-ExecStart=/path/to/flask run
+WorkingDirectory=/path/to/todo-remind
+ExecStart=/path/to/todo-remind/venv/bin/waitress-serve --listen=localhost:8088 --call todo_remind:create_app
 Environment=SECRET_KEY=<secret_key>
-Environment=FLASK_APP=/path/to/todo.py
 
 [Install]
 WantedBy=multi-user.target
