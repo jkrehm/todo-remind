@@ -11,19 +11,11 @@ from flask import abort, Flask, redirect, render_template, request, url_for
 from flask.cli import with_appcontext
 from hashlib import sha256
 from logging.handlers import RotatingFileHandler
-from pushbullet import Pushbullet
 from todo_remind import db as models
 from todo_remind.db import db
+from todo_remind.notification import send_notification
 from todo_remind.reverse_proxy import ReverseProxied
 from typing import List
-
-
-def send_notification(title, body, pb=None):
-    """Send notification via Pushbullet"""
-    if pb is None:
-        pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
-        pb = Pushbullet(pushbullet.access_token)
-    return pb.push_note(title=title, body=body)
 
 
 @click.command()
@@ -36,10 +28,8 @@ def notify():
     )  # type: List[models.ToDo]
     if notifications is None:
         return
-    pushbullet = db.session.query(models.Pushbullet).first()  # type: models.Pushbullet
-    pb = Pushbullet(pushbullet.access_token)
     for notification in notifications:
-        send_notification(title='Todo Reminder', body=notification.text, pb=pb)
+        send_notification(title='Todo Reminder', body=notification.text)
         db.session.delete(notification)
     db.session.commit()
 
